@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include <float.h>
+#include <cstdlib>
 
 #define B2_NOT_USED(x) ((void)(x))
 #if DEBUG && !defined(NDEBUG)
@@ -60,9 +61,10 @@ typedef long long int64;
 typedef unsigned long long uint64;
 #endif
 
-#define	b2_maxFloat		FLT_MAX
-#define	b2_epsilon		FLT_EPSILON
-#define b2_pi			3.14159265359f
+constexpr float b2_maxFloat = FLT_MAX;
+constexpr float b2_epsilon = FLT_EPSILON;
+constexpr float b2_pi = float(3.1415926535897932384626433832795);
+constexpr float b2_piInv = float(1.0 / 3.1415926535897932384626433832795);
 
 #if !defined(b2Inline)
 #if defined(__GNUC__)
@@ -81,6 +83,10 @@ typedef unsigned long long uint64;
 #define LIQUIDFUN_EXTERNAL_LANGUAGE_API 0
 #endif
 #endif
+
+// Force 0
+#undef LIQUIDFUN_EXTERNAL_LANGUAGE_API
+#define LIQUIDFUN_EXTERNAL_LANGUAGE_API 0
 
 /// @file
 /// Global tuning constants based on meters-kilograms-seconds (MKS) units.
@@ -209,35 +215,21 @@ typedef unsigned long long uint64;
 
 // Memory Allocation
 
-/// Implement this function to use your own memory allocator.
-void* b2Alloc(int32 size);
+inline void* b2Alloc(size_t size)
+{
+	return malloc(size);
+}
 
-/// If you implement b2Alloc, you should also implement this function.
-void b2Free(void* mem);
-
-/// Use this function to override b2Alloc() without recompiling this library.
-typedef void* (*b2AllocFunction)(int32 size, void* callbackData);
-/// Use this function to override b2Free() without recompiling this library.
-typedef void (*b2FreeFunction)(void* mem, void* callbackData);
-
-/// Set alloc and free callbacks to override the default behavior of using
-/// malloc() and free() for dynamic memory allocation.
-/// Set allocCallback and freeCallback to NULL to restore the default
-/// allocator (malloc / free).
-void b2SetAllocFreeCallbacks(b2AllocFunction allocCallback,
-							 b2FreeFunction freeCallback,
-							 void* callbackData);
-
-/// Set the number of calls to b2Alloc minus the number of calls to b2Free.
-/// This can be used to disable the empty heap check in
-/// b2SetAllocFreeCallbacks() which can be useful for testing.
-void b2SetNumAllocs(const int32 numAllocs);
-
-/// Get number of calls to b2Alloc minus number of calls to b2Free.
-int32 b2GetNumAllocs();
+inline void b2Free(void* mem)
+{
+	free(mem);
+}
 
 /// Logging function.
-void b2Log(const char* string, ...);
+inline void b2Log(const char* string, ...)
+{
+	B2_NOT_USED(string);
+}
 
 /// Version numbering scheme.
 /// See http://en.wikipedia.org/wiki/Software_versioning

@@ -4,6 +4,10 @@
 *.class
 *.a
 *~
+*.ipch
+*.VC.db-shm
+*.VC.db-wal
+*.VC.db
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
@@ -76,4 +80,5 @@ local.properties
 project.properties
 proguard-project.txt
 linklint_results
-
+[Bb]uild/
+.[Bb]uild/
